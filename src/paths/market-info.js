@@ -1,10 +1,8 @@
 const express = require('express');
 const axios = require('axios');
-var cors = require('cors')
-var app = express()
+const cors = require('cors')
 
-
-require('dotenv').config()
+require('dotenv').config();
 const { URL_API, TOKEN_API, ASSETS_TO_GET } = process.env;
 
 
