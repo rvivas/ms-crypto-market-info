@@ -1,12 +1,16 @@
 const express = require('express');
 const axios = require('axios');
+var cors = require('cors')
+var app = express()
+
+
 require('dotenv').config()
 const { URL_API, TOKEN_API, ASSETS_TO_GET } = process.env;
 
 
 const app = express();
 
-app.get('/getMarketInfo', async (req, res) => {
+app.get('/getMarketInfo',cors(), async (req, res) => {
   try {
     console.log(URL_API), console.log(TOKEN_API);
     console.log(ASSETS_TO_GET);
