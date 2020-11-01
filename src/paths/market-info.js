@@ -1,14 +1,21 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors')
-
+const corsOptions = {
+ "origin": "*",
+  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+  "preflightContinue": false,
+  "optionsSuccessStatus": 204,
+  "allowedHeaders": '*'
+    
+}
 require('dotenv').config();
 const { URL_API, TOKEN_API, ASSETS_TO_GET } = process.env;
 
 
 const app = express();
 
-app.get('/getMarketInfo',cors(), async (req, res) => {
+app.get('/getMarketInfo',cors(corsOptions), async (req, res) => {
   try {
     console.log(URL_API), console.log(TOKEN_API);
     console.log(ASSETS_TO_GET);
