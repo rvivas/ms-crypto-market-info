@@ -1,0 +1,28 @@
+{
+  "name": "ms-crypto-market-info",
+  "version": "0.0.1",
+  "description": "Micro service to get info about market using coinapi.io API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rvivas/ms-crypto-market-info.git"
+  },
+  "author": "Ruben Vivas",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rvivas/ms-crypto-market-info/issues"
+  },
+  "homepage": "https://github.com/rvivas/ms-crypto-market-info#readme",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
