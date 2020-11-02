@@ -45,7 +45,7 @@ app.get('/getMarketInfo',cors(corsOptions), async (req, res) => {
   }
 });
 
-app.get('/getHistoryAsset/:asset', async(req, res) => {
+app.get('/getHistoryAsset/:asset',cors(corsOptions), async(req, res) => {
   try {
     const date = new Date();
     const timeEnd = date.toISOString().split('T')[0];
