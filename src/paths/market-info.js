@@ -10,7 +10,7 @@ const corsOptions = {
     
 }
 require('dotenv').config();
-const { URL_API, TOKEN_API, ASSETS_TO_GET } = process.env;
+const { URL_API, URL_API_PROD, TOKEN_API, ASSETS_TO_GET, PERIOD_ID_HISTORY } = process.env;
 
 
 const app = express();
@@ -44,5 +44,42 @@ app.get('/getMarketInfo',cors(corsOptions), async (req, res) => {
     })
   }
 });
+
+app.get('/getHistoryAsset/:asset', async(req, res) => {
+  try {
+    const date = new Date();
+    const timeEnd = date.toISOString().split('T')[0];
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate()-8)
+    const timeStart = sevenDaysAgo.toISOString().split('T')[0];
+    const { data } = await axios.get(
+      `${URL_API_PROD}/ohlcv/${req.params.asset}/USD/history?period_id=${PERIOD_ID_HISTORY}&time_start=${timeStart}&time_end=${timeEnd}`
+    , {
+      headers: {
+	'X-CoinAPI-Key': TOKEN_API
+      }
+    });
+    const historyAsset = data.map((history) => {
+      return {
+        periodStart: history.time_period_start,
+        highPrice: history.price_high,
+      };
+    });
+    return res.status(200).json({
+      ok: true,
+      historyAsset
+    })
+  }catch(err){
+   console.log('Error',err)
+    return res.status(500).json({
+      ok: false,
+      message: 'Internal error in server',
+    });
+   
+  }
+ 
+})
+
+
 
 module.exports = app
