@@ -1,64 +1,63 @@
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors')
+const cors = require('cors');
 const corsOptions = {
- "origin": "*",
-  "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-  "preflightContinue": false,
-  "optionsSuccessStatus": 204,
-  "allowedHeaders": '*'
-    
-}
+  origin: '*',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: '*',
+};
 require('dotenv').config();
-const { URL_API, URL_API_PROD, TOKEN_API, ASSETS_TO_GET, PERIOD_ID_HISTORY } = process.env;
-
+const { URL_API, URL_API_PROD, TOKEN_API, ASSETS_TO_GET, PERIOD_ID_HISTORY, LIMIT_HISTORICAL_DATA } = process.env;
 
 const app = express();
 
-app.get('/getMarketInfo',cors(corsOptions), async (req, res) => {
+app.get('/getMarketInfo', cors(corsOptions), async (req, res) => {
   try {
     console.log(URL_API), console.log(TOKEN_API);
     console.log(ASSETS_TO_GET);
-    const { data } = await axios
-      .get(`${URL_API}/assets?filter_asset_id=${ASSETS_TO_GET}`, {
-        headers: {
-          'X-CoinAPI-Key': TOKEN_API,
-        },
-      })
-    const assets = data.map( asset => {
-	return {
-	  id: asset.asset_id,
-	  name: asset.name,
-	  priceUsd: asset.price_usd,
-	}
-    }) 
+    const { data } = await axios.get(`${URL_API}/assets?filter_asset_id=${ASSETS_TO_GET}`, {
+      headers: {
+        'X-CoinAPI-Key': TOKEN_API,
+      },
+    });
+    const assets = data.map((asset) => {
+      return {
+        id: asset.asset_id,
+        name: asset.name,
+        priceUsd: asset.price_usd,
+      };
+    });
     return res.status(200).json({
       ok: true,
-      assets
+      assets,
     });
   } catch (err) {
     console.log('Error', err);
     return res.status(500).json({
       ok: false,
-      message: 'Internal error in server'
-    })
+      message: 'Internal error in server',
+    });
   }
 });
 
-app.get('/getHistoryAsset/:asset',cors(corsOptions), async(req, res) => {
+app.get('/getHistoryAsset/:asset', cors(corsOptions), async (req, res) => {
   try {
     const date = new Date();
-    const timeEnd = date.toISOString().split('T')[0];
-    const sevenDaysAgo = new Date()
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate()-8)
-    const timeStart = sevenDaysAgo.toISOString().split('T')[0];
+    const timeEnd = date.toISOString();
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 8);
+    const timeStart = sevenDaysAgo.toISOString();
     const { data } = await axios.get(
-      `${URL_API_PROD}/ohlcv/${req.params.asset}/USD/history?period_id=${PERIOD_ID_HISTORY}&time_start=${timeStart}&time_end=${timeEnd}`
-    , {
-      headers: {
-	'X-CoinAPI-Key': TOKEN_API
+      `${URL_API_PROD}/ohlcv/${req.params.asset}/USD/history?period_id=${PERIOD_ID_HISTORY}&time_start=${timeStart}&time_end=${timeEnd}&limit=1000`,
+      {
+        headers: {
+          'X-CoinAPI-Key': TOKEN_API,
+        },
       }
-    });
+    );
+
     const historyAsset = data.map((history) => {
       return {
         periodStart: history.time_period_start,
@@ -67,19 +66,15 @@ app.get('/getHistoryAsset/:asset',cors(corsOptions), async(req, res) => {
     });
     return res.status(200).json({
       ok: true,
-      historyAsset
-    })
-  }catch(err){
-   console.log('Error',err)
+      historyAsset,
+    });
+  } catch (err) {
+    console.log('Error', err);
     return res.status(500).json({
       ok: false,
       message: 'Internal error in server',
     });
-   
   }
- 
-})
+});
 
-
-
-module.exports = app
+module.exports = app;
