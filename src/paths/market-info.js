@@ -1,21 +1,15 @@
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
-const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: '*',
-};
 require('dotenv').config();
-const { URL_API, URL_API_PROD, TOKEN_API, ASSETS_TO_GET, PERIOD_ID_HISTORY, LIMIT_HISTORICAL_DATA } = process.env;
+const { URL_API, URL_API_PROD, TOKEN_API, ASSETS_TO_GET, PERIOD_ID_HISTORY } = process.env;
 
 const app = express();
 
-app.get('/getMarketInfo', cors(corsOptions), async (req, res) => {
+app.get('/getMarketInfo', cors(), async (req, res) => {
   try {
-    console.log(URL_API), console.log(TOKEN_API);
+    console.log(URL_API);
+    console.log(TOKEN_API);
     console.log(ASSETS_TO_GET);
     const { data } = await axios.get(`${URL_API}/assets?filter_asset_id=${ASSETS_TO_GET}`, {
       headers: {
@@ -37,12 +31,12 @@ app.get('/getMarketInfo', cors(corsOptions), async (req, res) => {
     console.log('Error', err);
     return res.status(500).json({
       ok: false,
-      message: 'Internal error in server',
+      message: err,
     });
   }
 });
 
-app.get('/getHistoryAsset/:asset', cors(corsOptions), async (req, res) => {
+app.get('/getHistoryAsset/:asset', cors(), async (req, res) => {
   try {
     const date = new Date();
     const timeEnd = date.toISOString();
@@ -72,7 +66,7 @@ app.get('/getHistoryAsset/:asset', cors(corsOptions), async (req, res) => {
     console.log('Error', err);
     return res.status(500).json({
       ok: false,
-      message: 'Internal error in server',
+      message: err,
     });
   }
 });
